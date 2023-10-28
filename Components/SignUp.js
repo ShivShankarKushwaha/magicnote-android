@@ -11,7 +11,7 @@ import OTP from './OTP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin, GoogleSigninButton, statusCodes, } from '@react-native-google-signin/google-signin';
 GoogleSignin.configure();
-
+import config from '../config'
 
 const SignUp = ({ setLoggedin }) =>
 {
@@ -31,7 +31,8 @@ const SignUp = ({ setLoggedin }) =>
     {
         try {
             await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
+            let userInfo = await GoogleSignin.signIn();
+            userInfo.API =config.API;
             console.log('userinfo', userInfo);
             setloading(true);
             axios.post("/androidgooglesign",{userInfo:userInfo})
