@@ -3,6 +3,7 @@ import qs from 'qs';
 
 export default axios.create({
     // baseURL: 'https://magicnoteandroidserver.onrender.com', // Replace with your API base URL
+    // baseURL: 'http://192.168.11.89:5500', // Replace with your API base URL
     baseURL: 'https://magicnoteandroidserver-7x6l.onrender.com', // Replace with your API base URL
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

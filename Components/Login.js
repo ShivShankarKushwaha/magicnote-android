@@ -1,6 +1,5 @@
 
 import { View, Text, TextInput, Button, TouchableOpacity, Alert, Linking } from 'react-native'
-import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react'
 import Header1 from './Header1';
@@ -9,6 +8,8 @@ import Footercomp from './Footer';
 import axios from '../axios';
 import Spinner from './Spinner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin, GoogleSigninButton, statusCodes, } from '@react-native-google-signin/google-signin';
+GoogleSignin.configure();
 
 const Login = ({ setLoggedin }) =>
 {
@@ -68,6 +69,45 @@ const Login = ({ setLoggedin }) =>
       setloading(false);
     }
   }
+  const signInWithGoogle = async () =>
+  {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('userinfo', userInfo);
+      setloading(true);
+      axios.post("/androidgooglesign", { userInfo: userInfo })
+        .then(result =>
+        {
+          console.log(result.data);
+          const token = result.data?.token;
+          console.log('jwt token received', token);
+          if (token) {
+            AsyncStorage.setItem('token', token).then(() => { console.log('token saved'); })
+          }
+          setLoggedin(true);
+        })
+        .catch(async err =>
+        {
+          Alert.alert('Error', 'Something Error Occured');
+          try {
+            await GoogleSignin.revokeAccess();
+          } catch (error) {
+
+          }
+        })
+        .finally(() => { setloading(false) });
+      // setuserdata(userInfo.user);
+      // Is it good to send userdata in backend from here
+    } catch (error) {
+      console.log(error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      } else {
+      }
+    }
+  };
   return (
     <ScrollView>
       <Header1></Header1>
@@ -86,8 +126,9 @@ const Login = ({ setLoggedin }) =>
             color={GoogleSigninButton.Color.Dark}
             onPress={() =>
             {
+              signInWithGoogle();
               // Linking.openURL('http://localhost:5500/auth/google') 
-              Alert.alert('unavailable', 'please use custom login')
+              // Alert.alert('unavailable', 'please use custom login')
             }}
           />
           <TouchableOpacity className="mt-5">

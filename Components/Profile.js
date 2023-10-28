@@ -6,6 +6,8 @@ import Footercomp from './Footer';
 import Spinner from './Spinner';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin, GoogleSigninButton, statusCodes, } from '@react-native-google-signin/google-signin';
+GoogleSignin.configure();
 
 function Profile({ setLoggedin })
 {
@@ -42,6 +44,7 @@ function Profile({ setLoggedin })
             axios.get("/logout")
             .then(result =>
                 {
+                GoogleSignin.revokeAccess().then(()=>{console.log('google logout');})
                 AsyncStorage.removeItem('token').then(()=>{console.log('Jwt token removed from profile page');})
                 console.log(result.data);
                 setLoggedin(false);

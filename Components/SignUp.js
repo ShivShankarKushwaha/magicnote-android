@@ -9,6 +9,9 @@ import axios from '../axios';
 import Spinner from './Spinner';
 import OTP from './OTP';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin, GoogleSigninButton, statusCodes, } from '@react-native-google-signin/google-signin';
+GoogleSignin.configure();
+
 
 const SignUp = ({ setLoggedin }) =>
 {
@@ -24,6 +27,45 @@ const SignUp = ({ setLoggedin }) =>
             setserror('')
         }, 5000);
     }
+    const signInWithGoogle = async () =>
+    {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            console.log('userinfo', userInfo);
+            setloading(true);
+            axios.post("/androidgooglesign",{userInfo:userInfo})
+            .then(result=>{
+                console.log(result.data);
+                const token = result.data?.token;
+                console.log('jwt token received', token);
+                if (token) {
+                    AsyncStorage.setItem('token', token).then(() => { console.log('token saved'); })
+                }
+                setLoggedin(true);
+            })
+            .catch(async err=>
+                {
+                    Alert.alert('Error','Something Error Occured');
+                    try { 
+                        await GoogleSignin.revokeAccess();
+                    } catch (error) {
+                        
+                    }
+                })
+                .finally(()=>{setloading(false)});
+            // setuserdata(userInfo.user);
+            // Is it good to send userdata in backend from here
+        } catch (error) {
+            console.log(error);
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+            } else {
+            }
+        }
+    };
+
     async function signupuser()
     {
         var regex = /^[a-zA-Z\s]*$/;
@@ -56,9 +98,9 @@ const SignUp = ({ setLoggedin }) =>
             {
                 const token = result.data?.token;
                 console.log('jwt token received', token);
-                if (token) {
-                    AsyncStorage.setItem('token', token).then(()=>{console.log('token saved');})
-                }
+                // if (token) {
+                //     AsyncStorage.setItem('token', token).then(()=>{console.log('token saved');})
+                // }
                 if (result.data.status === 401) {
                     setloading(false);
                     return Alert.alert('Email not accepted');
@@ -82,25 +124,6 @@ const SignUp = ({ setLoggedin }) =>
                 setloading(false);
 
             })
-        // fetch( `https://healthtracker-jwpl.onrender.com/sign`, {
-        //   method: 'POST',
-        //   credentials: 'include',
-        //   body: new URLSearchParams(user)
-        // })
-        //   .then(response =>
-        //   {
-        //     if (response.status === 200) {
-        //     setshowotp(true);
-        //     setloading(false);
-        //     }
-        //     return response.json();
-        //   })
-        //   .then(result =>
-        //   {
-        //     Alert.alert('User Already Exist! Please Login')
-        //     console.log(result);
-        //   });
-
     }
     return (
         <ScrollView>
@@ -123,8 +146,9 @@ const SignUp = ({ setLoggedin }) =>
                     </View>
                     <TouchableOpacity style={styles.googleButton} onPress={() =>
                     {
+                        signInWithGoogle();
                         // Linking.openURL('http://localhost:5500/auth/google') 
-                        Alert.alert('Unavailable', 'try custom sign up')
+                        // Alert.alert('Unavailable', 'try custom sign up')
                     }}>
                         <View style={styles.iconContainer}>
                             <Text style={styles.iconText}>G</Text>
