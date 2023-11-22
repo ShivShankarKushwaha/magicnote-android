@@ -21,7 +21,7 @@ const NoteScreen = ({ loggedin }) =>
         axios.get("/getnotes")
         .then(result=>{console.log(result.data);setallnotes(result.data)})
         .catch(err=>{console.log('Notes not found');})
-    },[updatelist])
+    },[updatelist,loggedin])
     const addNote = () =>
     {
         if(!loggedin)
