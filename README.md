@@ -50,6 +50,7 @@ Magicnote simplifies note-taking and reminders. Use the app to:
 <img style="width: 10rem;" src="https://i.ibb.co/nBS0vjy/IMG-20231128-WA0005.jpg" alt="IMG-20231128-WA0003" border="0">
 <img  style="width: 10rem;" src="https://i.ibb.co/GTK1Vrr/IMG-20231128-WA0006.jpg" alt="IMG-20231128-WA0006" alt="IMG-20231128-WA0004" border="0">
 <img style="width: 10rem;" src="https://i.ibb.co/bdz6RFb/IMG-20231128-WA0007.jpg" alt="IMG-20231128-WA0003" border="0">
+<img style="width: 10rem;" src="https://i.ibb.co/CvTP7Yq/IMG-20231128-WA0008.jpg" alt="IMG-20231128-WA0003" border="0">
 </div>
 
 
